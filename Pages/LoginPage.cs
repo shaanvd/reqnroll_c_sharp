@@ -23,4 +23,11 @@ public sealed class LoginPage : BasePage
     {
         return Wait.Until(d => d.Url.Contains("inventory.html"));
     }
+
+    private readonly By _errorMessageContainer = By.CssSelector("[data-test='error']");
+
+    public string GetErrorMessage()
+    {
+        return Wait.Until(d => d.FindElement(_errorMessageContainer)).Text;
+    }
 }

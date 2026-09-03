@@ -36,4 +36,19 @@ public sealed class LoginSteps
         Assert.That(_loginPage.IsInventoryPageDisplayed(), Is.True,
             "The user was not redirected to the inventory dashboard.");
     }
+
+    [When("they enter invalid credentials from configuration")]
+    public void WhenTheyEnterInvalidCredentialsFromConfiguration()
+    {
+        var credentials = _settings.Users["LockedOutUser"];
+        _loginPage.Login(credentials.Username, credentials.Password);
+    }
+
+    [Then("an error message should display {string}")]
+    public void ThenAnErrorMessageShouldDisplay(string expectedMessage)
+    {
+        var actualMessage = _loginPage.GetErrorMessage();
+        Assert.That(actualMessage, Does.Contain(expectedMessage),
+            "The error banner did not contain the expected text.");
+    }
 }
