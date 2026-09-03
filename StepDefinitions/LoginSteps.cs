@@ -1,68 +1,39 @@
-﻿using System;
-using NUnit.Framework;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
+﻿using NUnit.Framework;
 using Reqnroll;
+using reqnroll_project.Config;
+using reqnroll_project.Pages;
+
+namespace reqnroll_project.StepDefinitions;
 
 [Binding]
-public sealed class LoginUiSteps
+public sealed class LoginSteps
 {
-    private IWebDriver? _driver;
-    private WebDriverWait? _wait;
+    private readonly LoginPage _loginPage;
+    private readonly TestSettings _settings;
 
-    [BeforeScenario]
-    public void StartBrowser()
+    public LoginSteps(LoginPage loginPage, TestSettings settings)
     {
-        var options = new ChromeOptions();
-        options.AddArgument("--start-maximized");
-
-        _driver = new ChromeDriver(options);
-        _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
+        _loginPage = loginPage;
+        _settings = settings;
     }
 
-    [Given("the user is on the login page")]
-    public void GivenTheUserIsOnTheLoginPage()
+    [Given("the user navigates to the login portal")]
+    public void GivenTheUserNavigatesToTheLoginPortal()
     {
-        _driver!.Navigate().GoToUrl("https://www.saucedemo.com/");
-        _wait!.Until(d => d.FindElement(By.Id("user-name")).Displayed);
+        _loginPage.NavigateTo(_settings.BaseUrl);
     }
 
-    [When("they enter a valid username and password")]
-    public void WhenTheyEnterValidCredentials()
+    [When("they enter valid credentials from configuration")]
+    public void WhenTheyEnterValidCredentialsFromConfiguration()
     {
-        var usernameInput = _wait!.Until(d => d.FindElement(By.Id("user-name")));
-        var passwordInput = _driver!.FindElement(By.Id("password"));
-        var loginButton = _driver.FindElement(By.Id("login-button"));
-
-        usernameInput.Clear();
-        usernameInput.SendKeys("standard_user");
-
-        passwordInput.Clear();
-        passwordInput.SendKeys("secret_sauce");
-
-        loginButton.Click();
+        var credentials = _settings.Users["StandardUser"];
+        _loginPage.Login(credentials.Username, credentials.Password);
     }
 
-    [Then("they should be redirected to the dashboard")]
-    public void ThenTheySeeTheDashboard()
+    [Then("they should be redirected to the inventory dashboard")]
+    public void ThenTheyShouldBeRedirectedToTheInventoryDashboard()
     {
-        // SauceDemo lands on inventory.html upon successful authentication
-        var redirected = _wait!.Until(d => d.Url.Contains("inventory.html"));
-        Assert.That(redirected, Is.True, $"Expected URL to contain 'inventory.html', but was '{_driver!.Url}'.");
-    }
-
-    [AfterScenario]
-    public void StopBrowser()
-    {
-        try
-        {
-            _driver?.Quit();
-        }
-        finally
-        {
-            _driver?.Dispose();
-            _driver = null;
-        }
+        Assert.That(_loginPage.IsInventoryPageDisplayed(), Is.True,
+            "The user was not redirected to the inventory dashboard.");
     }
 }
