@@ -8,20 +8,42 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<!-- Core Testing SDK & NUnit -->
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
-		<PackageReference Include="Reqnroll.NUnit" Version="2.0.0" />
-		<PackageReference Include="nunit" Version="4.1.0" />
+		<PackageReference Include="NUnit" Version="4.1.0" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+
+		<!-- Reqnroll BDD Framework -->
+		<PackageReference Include="Reqnroll.NUnit" Version="2.0.0" />
+
+		<!-- Selenium WebDriver -->
 		<PackageReference Include="Selenium.WebDriver" Version="4.23.0" />
+
+		<!-- Configuration (JSON Binding) -->
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0" />
+
+		<!-- Allure Reporting -->
+		<PackageReference Include="Allure.Reqnroll" Version="2.12.1" />
+
+		<!-- Logging -->
+		<PackageReference Include="Serilog" Version="4.0.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Update="allureConfig.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
-
+	
+	<Target Name="CreateTestResultsDirectory" AfterTargets="Build">
+		<MakeDir Directories="$(TargetDir)TestResults;$(TargetDir)allure-results" />
+	</Target>
 </Project>
+

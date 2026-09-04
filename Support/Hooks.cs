@@ -28,6 +28,7 @@ public sealed class Hooks
         _container.RegisterInstanceAs(settings);
         _container.RegisterInstanceAs(_driver);
         _container.RegisterInstanceAs(new LoginPage(_driver, settings.TimeoutSeconds));
+        _container.RegisterInstanceAs(new RoomReservationPage(_driver, settings.TimeoutSeconds));
     }
 
     [AfterScenario]
