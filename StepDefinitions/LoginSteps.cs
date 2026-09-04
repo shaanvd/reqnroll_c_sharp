@@ -40,7 +40,7 @@ public sealed class LoginSteps
     [When("they enter invalid credentials from configuration")]
     public void WhenTheyEnterInvalidCredentialsFromConfiguration()
     {
-        var credentials = _settings.Users["InvalidUser"];
+        var credentials = _settings.Users["LockedOutUser"];
         _loginPage.Login(credentials.Username, credentials.Password);
     }
 
