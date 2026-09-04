@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using Allure.Net.Commons;
+using OpenQA.Selenium;
 using Reqnroll;
 using Reqnroll.BoDi;
 using reqnroll_project.Config;
@@ -11,11 +12,13 @@ namespace reqnroll_project.Support;
 public sealed class Hooks
 {
     private readonly IObjectContainer _container;
+    private readonly ScenarioContext _scenarioContext; // 1. Needed to detect failures
     private IWebDriver? _driver;
 
-    public Hooks(IObjectContainer container)
+    public Hooks(IObjectContainer container, ScenarioContext scenarioContext)
     {
         _container = container;
+        _scenarioContext = scenarioContext;
     }
 
     [BeforeScenario]
@@ -29,12 +32,35 @@ public sealed class Hooks
         _container.RegisterInstanceAs(_driver);
         _container.RegisterInstanceAs(new LoginPage(_driver, settings.TimeoutSeconds));
         _container.RegisterInstanceAs(new RoomReservationPage(_driver, settings.TimeoutSeconds));
+        TestLogger.Log.Information("Starting scenario: {Title}", _scenarioContext.ScenarioInfo.Title);
     }
+    
 
-    [AfterScenario]
+  [AfterScenario]
     public void AfterScenario()
     {
+        if (_scenarioContext.TestError != null)
+        {
+            TestLogger.Log.Error("Test failed: {Message}", _scenarioContext.TestError.Message);
+
+            if (_driver is ITakesScreenshot screenshotDriver)
+            {
+                var screenshot = screenshotDriver.GetScreenshot().AsByteArray;
+                AllureApi.AddAttachment("Failure Screenshot", "image/png", screenshot);
+            }
+        }
+        else
+        {
+            TestLogger.Log.Information("Test passed successfully.");
+        }
+
         _driver?.Quit();
         _driver?.Dispose();
+    }
+
+    [AfterTestRun]
+    public static void FlushLogs()
+    {
+        Serilog.Log.CloseAndFlush();
     }
 }

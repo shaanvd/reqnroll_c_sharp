@@ -10,8 +10,7 @@ public static class TestLogger
 
     static TestLogger()
     {
-        var logsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "TestResults", "Logs");
-
+        var logsDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
         Directory.CreateDirectory(logsDirectory);
 
         LoggerInstance = new LoggerConfiguration()
@@ -20,8 +19,12 @@ public static class TestLogger
             .WriteTo.File(
                 Path.Combine(logsDirectory, "test_execution_.log"),
                 rollingInterval: RollingInterval.Day,
+                flushToDiskInterval: TimeSpan.FromSeconds(1), 
                 outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
             .CreateLogger();
+
+        Serilog.Log.Logger = LoggerInstance;
     }
+
     public static Serilog.ILogger Log => LoggerInstance;
 }
