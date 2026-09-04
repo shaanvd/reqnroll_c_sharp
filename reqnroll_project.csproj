@@ -1,26 +1,49 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Reqnroll_Project</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageReference Include="Reqnroll.NUnit" Version="3.2.0" />
-    <PackageReference Include="nunit" Version="4.4.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="5.1.0" />
-    <PackageReference Include="Selenium.Support" Version="4.48.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.48.0" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="152.0.7977.7500" />
-  </ItemGroup>
+	<ItemGroup>
+		<!-- Core Testing SDK & NUnit -->
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+		<PackageReference Include="NUnit" Version="4.1.0" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
 
-  <ItemGroup>
-    <Folder Include="Drivers\" />
-    <Folder Include="Features\" />
-    <Folder Include="Support\" />
-  </ItemGroup>
+		<!-- Reqnroll BDD Framework -->
+		<PackageReference Include="Reqnroll.NUnit" Version="2.0.0" />
 
+		<!-- Selenium WebDriver -->
+		<PackageReference Include="Selenium.WebDriver" Version="4.23.0" />
+
+		<!-- Configuration (JSON Binding) -->
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0" />
+
+		<!-- Allure Reporting -->
+		<PackageReference Include="Allure.Reqnroll" Version="2.12.1" />
+
+		<!-- Logging -->
+		<PackageReference Include="Serilog" Version="4.0.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="allureConfig.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	
+	<Target Name="CreateTestResultsDirectory" AfterTargets="Build">
+		<MakeDir Directories="$(TargetDir)TestResults;$(TargetDir)allure-results" />
+	</Target>
 </Project>
+
