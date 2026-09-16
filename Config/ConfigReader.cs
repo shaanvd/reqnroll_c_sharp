@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Microsoft.Extensions.Configuration;
 
 namespace reqnroll_project.Config;
@@ -7,12 +8,15 @@ public static class ConfigReader
 {
     public static TestSettings Load()
     {
-        var config = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddEnvironmentVariables() // Reads TestSettings__UseGrid and TestSettings__GridUrl
             .Build();
 
-        return config.GetSection("TestSettings").Get<TestSettings>()
-               ?? throw new InvalidOperationException("Could not bind TestSettings from appsettings.json");
+        var settings = new TestSettings();
+        configuration.GetSection("TestSettings").Bind(settings);
+
+        return settings;
     }
 }

@@ -12,14 +12,18 @@ public static class TestLogger
 
     static TestLogger()
     {
+        // 1. Pipe internal Serilog write failures directly to NUnit console
         Serilog.Debugging.SelfLog.Enable(msg => TestContext.Progress.WriteLine($"[Serilog Error] {msg}"));
 
-        var projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\"));
-        LogsDirectory = Path.Combine(projectRoot, "Logs");
+        // 2. Cross-platform path resolution:
+        // In Docker: resolves cleanly to /app/Logs
+        // On Windows: resolves to <repo>\reqnroll_project\Logs
+        LogsDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Logs"));
 
+        // 3. Ensure the target directory exists
         Directory.CreateDirectory(LogsDirectory);
 
-
+        // 4. Configure file logger
         LoggerInstance = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")

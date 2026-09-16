@@ -1,6 +1,0 @@
-2026-09-04 14:19:02.973 +01:00 [INF] === Starting Scenario: Required guest details are validated ===
-2026-09-04 14:19:12.530 +01:00 [INF] === Scenario Passed Successfully ===
-2026-09-04 14:19:12.806 +01:00 [INF] === Starting Scenario: Successful login with valid credentials ===
-2026-09-04 14:19:15.091 +01:00 [INF] === Scenario Passed Successfully ===
-2026-09-04 14:19:15.279 +01:00 [INF] === Starting Scenario: Unsuccessful login with invalid credentials ===
-2026-09-04 14:19:17.100 +01:00 [ERR] Test failed: The given key 'InvalidUser' was not present in the dictionary.

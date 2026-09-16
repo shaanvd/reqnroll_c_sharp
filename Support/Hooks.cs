@@ -31,7 +31,7 @@ public sealed class Hooks
         TestContext.Progress.WriteLine($"[LOG FOLDER]: {TestLogger.LogsDirectory}");
 
         var settings = ConfigReader.Load();
-        _driver = DriverFactory.CreateDriver(settings.Browser);
+        _driver = DriverFactory.CreateDriver(settings);
         _driver.Manage().Window.Maximize();
 
         _container.RegisterInstanceAs(settings);
